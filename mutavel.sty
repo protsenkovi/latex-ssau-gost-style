@@ -1,0 +1,390 @@
+\ProvidesPackage{mutavel}
+
+%%% Стиль создан для соответствия документа общим требованиям к оформлению текстовых документов (СТО СГАУ 02068410-004-2007) в СГАУ.
+%%% Ниже краткого описания будут приведены цитаты из стандарта, комментирующие настройки стиля.
+
+%%% Оформление иллюстраций в документе необходимо делать следующим образом:
+%%% \begin{figure}[h] \label{fig:figure1}
+%%%   \includegraphics{figirefilename}
+%%%   \caption{Подпись к рисунку без точки в конце}
+%%% \end{figure}
+%%% Параметр h - означает попытку вставки иллюстрации там, где располагается приведённый код latex.
+%%% То есть для текста <<... как показано на рисунке \ref{fig:figure1}. \begin{figure} ... \end{figure}
+%%% Далее мы рассмотрим ...>> иллюстрация будет размещена между обрамляющим текстом, если это
+%%% возможно при компиляции документа.
+%%% Другими параметрами являются b --- вставка внизу страницы, t --- вверху страницы.
+%%% Существует соглашение о присвоении меток \label для графиков с премиксом <<fig:>>. Ссылаются 
+%%% на метку с помощью команды \ref, подставляющей в текст номер, присвоенный элементу, к которому относится метка.
+
+%%% Оформление таблиц в документе осуществляется практически также как и иллюстраций:
+%%% \begin{table}[h] \label{tab:table1}
+%%%   \caption{Подпись к таблице без точки в конце}
+%%%   \begin{tabular}{|c|c|c|} \hline
+%%%       Количество 1 & Количество 2 & Сумма \\ \hline
+%%%           1        &        2     &   3   \\ \hline
+%%%   \end{tabular}
+%%% \end{table}
+%%% Об особенностях оформления самой таблицы частично написано в этом файле ниже, при настройке инструментов
+%%% для работы с таблицами. Полная версия находится в стандарте.
+%%% Подпись в отличии от  иллюстраций находится над таблицей. Необходимый параметр {|c|c|c|} --- определяет 3 столбца с 
+%%% центрированием текста посередине. Каждый столбец отделён вертикальной чертой. Для отделения 
+%%% строк используется \hline. Символом & разделяются данные таблицы на колонки.
+
+
+%%% Подключение кодировки шрифта (соответствие буква - глиф), под вопросом может и не так.
+%%% кодировки файла документа (соответствие номер - буква),  под вопросом может и не так.
+%%% пакета оформления библиографических ссылок.
+\RequirePackage[T2A]{fontenc} 
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[russian]{babel}
+%%% Пакет misccorr основан на russcorr (Сергей Львовский) и других источниках.
+%%% Используется в дополнении (и должен использоваться) к пакету babel, загруженному с 
+%%%   опцией russian.
+%%% Добавляются точки после номера раздела и тд.
+\RequirePackage{misccorr}
+%%% Documentation of the complete set of font-enc http://latex-project.org/guides/cyrguide.pdf
+
+%%% 3.1 Учебный документ выполняется на одной стороне листа бумаги белого цвета А4 (210x297 мм).
+%%% 3.3 Размеры полей: справа не менее 10мм, сверху и снизу - не менее 20мм, слева не менее 30мм.
+\RequirePackage{geometry}
+\geometry{
+    a4paper,
+    left=3cm,
+    right=1cm,
+    top=2.3cm,
+    bottom=2cm
+}
+
+%%% 3.2 Цвет шрифта - черный, высота букв не менее 1.8 мм (кегль не менее 12, рекомендуется - 14), полужирный шрифт не допускается.
+%%% Шрифты разной гарнитуры разрешаются для акцентирования внимания на определённых терминах, формулах, теоремах.
+%%% Параметры \fontsize: высота букв, высота межстрочного интервала. Идентично установке в шапке в \documentclass[14pt].
+%%% \AtBeginDocument{\fontsize{14pt}{18pt}\selectfont}
+
+%%% Пакет для настройки оформления стиля заголовков.
+\usepackage{titlesec}
+
+%%% 4.1.3 Основную часть документа следует делить на разделы, подразделы и пункты. Пункты, при необходиомсти делятся на подпункты.
+%%% Разделы, подразделы, пункты и подпункты следует нумеровать последовательно арабскими цифрами и записывать с абзацного отступа.
+%%% Разделы должны иметь порядковую нумерацию в пределах всего текста, за исключением приложений. 
+%%%
+%%% Номер подраздела или пункта включает номера раздела и подраздела или пункта, разделённые точкой. Номер подпункта включает номера 
+%%% раздела, подраздела, пункта и подпункта, разделённые точкой. После последней цифры номера раздела, подраздела, пункта и подпункта 
+%%% точка не ставится. 
+%%% Установка переменной с величиной абзацного отступа.
+\newlength{\normalparindent}
+\AtBeginDocument{\setlength{\normalparindent}{\parindent}} 
+
+%%% 4.1.9 Разделы и подразделы должны иметь заголовки. Пункты и подпункты, как правило, заголовков не имеют. Заголовки должны чётко и
+%%% кратко отражать содержание разделов и подразделов. Заголовки начинаются с прописной буквы, без точки в конце (ответственность 
+%%% оформителя), не подчеркиваются. Переносы слов в заголовках не допускаются. ...
+
+%%% 4.1.10 Каждый раздел учебного текстового документа следует начинать с новой страницы.
+\newcommand{\sectionbreak}{\clearpage\newpage}
+
+%%% Latex по-умолчанию нумерует разделы, подразделы, пункты арабскими цифрами. Выполняются требования абзаца о разделении 
+%%%   номеров точкой.
+%%% Ниже добавляются абзацные отступы - установка \hangindent вручную, а также запрет на перенос слов - \nohyphens запрещает переносы, 
+%%%   высокое значение \tolerance не даёт длинным словам выходить за границу текста, выполняя перенос слова на новую строку.
+%%% \clearpage заставляет все отложенные до команды фигуры, таблицы, листинги отрисоваться, \newpage - команда начала новой страницы.
+\newcommand{\sectionFormat}[1]{
+    \tolerance=10000                         % Отсутствие возможности длинным словам вылезать за пределы границы отступа.
+    \raggedright                             % Хз.
+    \nohyphens{\textbf{#1}}                  % Запрет переносов.
+}
+
+\titleformat{name=\section}[block]
+    {\Large\bfseries}
+    {\hspace*{\normalparindent}\thesection}  % Запись с абзацного отступа.
+    {0em}                                    % Без дополнительного пробела между номером и тектом заголовка.
+    {\sectionFormat}                         
+
+\titleformat{name=\subsection}[block]
+    {\large\bfseries}
+    {\hspace*{\normalparindent}\thesubsection}
+    {0em}
+    {\sectionFormat}
+
+\titleformat{name=\subsubsection}[block]
+    {\large\bfseries}
+    {\hspace*{\normalparindent}\thesubsubsection}
+    {0em}
+    {\sectionFormat}
+
+%%% 4.1.1 Структурными элементами учебного текстового документа в порядке их расположения в документе являются:
+%%% титульный лист, задание(при наличии), реферат, содержание, определения/обозначения/сокращения(при наличии),
+%%% введение, основная часть, заключение, список использованных источников(при наличии), приложения(при наличии).
+
+%%% 4.1.2 .. Заголовки структурных элементов следует располагать в середине строки без точки в конце и печатать прописными буквами, 
+%%% не подчёркивая, например ВВЕДЕНИЕ, ЗАКЛЮЧЕНИЕ.
+\newcommand{\structureElementFormat}[1]{
+    \tolerance=10000 
+    \raggedright 
+    \centering
+    \nohyphens{\MakeUppercase{#1}}        % Прописные буквы.
+    \addcontentsline{toc}{section}{#1}    % Добавление в toc.
+}
+% titleformat command parameters:
+\titleformat{name=\section, numberless=true}[block] % [shape]
+    {\Large\bfseries}                               % format
+    {}                                              % label
+    {0em}                                           % separation
+    {\structureElementFormat}                       % before section text.
+
+%%% 5.4.2 (В содержании) Введение, заключение, список использованных источников и приложения не нумеруются как разделы. 
+
+%%% Временное отключение добавления в toc. "Введение" и "Заключение" без номера, добавляются. "Содержание" без номера, не добавляется.
+\newcommand{\nocontentsline}[3]{}
+\newcommand{\tocless}[2]{\bgroup\let\addcontentsline=\nocontentsline#1{#2}\egroup}
+\newcommand{\tableOfContents}{\tocless\tableofcontents\newpage} 
+
+%%% 4.2.1 Страницы учебного текстового документа и приложений, входящих в него, следует нумеровать арабскими цифрами, соблюдая сквозную 
+%%% нумерацию по всему тексту. Номер страницы проставляется в центре нижней части листа без точки.
+
+%%% Подключение пакета fancyhdr, позволяющего гибко настраивать колонтитулы документа. Все колонтитулы, кроме нижнего центрального 
+%%% убираются. В нём жирным шрифтом отображается номер страницы \thepage. Также убирается линия-разделитель между текстом и верхним 
+%%% колонтитулом. Latex по-умолчанию нумерует страницы документа.
+\RequirePackage{fancyhdr} 
+\lhead{}
+\chead{}
+\rhead{}
+\cfoot{\bfseries\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+%%% Работа с ссылками в электронной версии документа.
+%%% The hyperref package is used to handle cross-referencing commands in LaTeX to produce hypertext links in the document.
+%%% Создание цветовой схемы в чёрно-чёрных тонах, используемой для выделения ссылок внутри документа, веб-ссылок, ссылок на файлы.
+\RequirePackage{color}
+\definecolor{mylinkcolor}{RGB}{0, 0, 0} %{0, 51, 102}
+\definecolor{mycitecolor}{RGB}{0, 0, 0} %{53, 75, 94}
+\definecolor{myfilecolor}{RGB}{0, 0, 0} %{53, 75, 94}
+\definecolor{myurlcolor}{RGB}{0, 0, 0}  %{0, 51, 102}
+\RequirePackage[
+    pdftex, 
+    unicode, 
+    pdfborder = {0 0 0}, 
+    colorlinks=true,
+    linkcolor=mylinkcolor,
+    citecolor=mycitecolor, 
+    filecolor=myfilecolor,
+    urlcolor=myurlcolor
+]{hyperref}
+%%% The cmap package provides character map tables, which make PDF files generated by pdfLaTeX 
+%%% both searchable and copy-able in acrobat reader and other compliant PDF viewers. Encodings
+%%% supported are OT1, T1, T2A, T2B, T2C and T5, together with LAE (Arabic), LFE (Farsi) and 
+%%% LGR (Greek) and a variant OT1tt for cmtt-like fonts.
+\RequirePackage{cmap}
+
+
+%%% Работа с математикой. 
+
+%%% Подключение основных математических пакетов.
+\RequirePackage{
+    amsmath,
+    amssymb,
+    amsthm
+%    mathrsfs Provides a \mathscr command, rather than overwriting the standard \mathcal command, as in calrsfs. TODO
+}
+
+
+%%% Работа с таблицами.
+
+%%% 6.2.2 Таблицу следует располагать в документе непосредственно после текста, в котором она впервые упоминается, или на следующей странице.
+%%% 6.2.3 На все таблицы должны быть ссылки в документе. При ссылке в тексте следует писать слово <<таблица>> с указанием её номера, например <<анализ таблицы 3 показывает, что>>, в latex <<анализ таблицы \ref{tab:tab1} показывает, что>>.
+%%% 6.2.5 Наименование таблицы, при его наличии, должно отражать её содержание, быть точным и кратким. Наименование помещается над таблицей слева, без абзацного отступа, после слова <<Таблица>>, с прописной буквы, в одну строку с её номером, через тире. Точка в конце наименования таблицы не ставится.
+%%% 6.2.6 Таблицы, за исключением таблиц приложений, следует нумеровать арабскими цифрами сквозной нумерацией по всему документу. ...
+%%% 6.2.8 Таблицы слева справа и снизу, как правило, ограничиваются линиями. Головка таблицы отделяется линией от остальной части таблицы. Разделять заголовки и подзаголовки боковика и граф диагональными линиями не допускается.
+
+%%% Ниже подключается возможность объединения нескольких столбцов или строк в таблицах при помощи пакетов multicol, multirow, возможность раскрашивать ячейки, строки или столбцы (colortbl).
+%%% Подписи к рисункам добавляются командой \caption, например:
+%%% \begin{table} \label{tab:tab1} \caption{Подпись} \begin{tabular} ... \end{tabular}  \end{table}
+\RequirePackage{
+    multicol,
+    multirow,
+    colortbl
+}
+
+
+%%% Работа с графикой.
+
+%%% Возможность подключения изображений с помощью \includegraphics. Подписи к рисункам добавляются 
+%%% командой \caption, например:
+%%% \begin{figure} \includegraphics{photo} \caption{Подпись} \end{figure}
+%%% Также подключение плавающих изображений обтекаемых текстом в floatflt и расширение
+%%%   доступных имен файлов (grffile), не загружаемых по-умолчанию. Например, если в имени 
+%%%   файла изображении несколько пробелов или точек.
+%%% Установка корневой папки с изображениями в "images/".
+%%% Подключение подписей к окружениям figure и subfigure, т.е. к изображениям в документе.
+\RequirePackage{
+    graphicx,
+    floatflt,
+    grffile
+} 
+\graphicspath{{images/}}
+
+%%% 6.1.2 Иллюстрации следует располагать непосредственно после текста, в котором они упоминаются впервые, на следующей странице или в приложениях. На каждую иллюстрацию должна быть ссылка в тексте. Иллюстрации в текстовом документе обозначаются как рисунки.
+%%% 6.1.5 Иллюстрации, за исключением иллюстраций в приложениях, нумеруются сквозной нумерацией арабскими цифрами (по-умолчанию в latex). Если в документе одна иллюстрация, то она обозначается <<Рисунок 1>>.
+%%% 6.1.8 Иллюстрации, при необходимости, могут иметь наименования и пояснительные данные (подрисуночный текст). Пояснительные данные располагаются под иллюстрацией. Слово <<Рисунок>>, его номер и через тире наименование иллюстраций, с прописной буквы без точки в конце, помещаются ниже иллюстрации, после пояснительных данных, например - Рисунок 1.12 -- Детали прибора.
+\RequirePackage[labelsep=endash]{caption} % Рис 1. -> Рис 1 ---
+\RequirePackage{subcaption}
+\captionsetup[figure]{name=Рисунок}       % Рис 1. -> Рисунок 1
+
+%%% Подключение пакета subfigure, настройка подписей: начинаются с буквы. По-умолчанию, что-то другое. TODO ошибка счётчика при подключении.
+% \RequirePackage{subfig}
+% \renewcommand{\thesubfigure}{\asbuk{subfigure}}
+
+
+%%% Работа с общим форматированием текста. 
+
+%%% http://www.khirevich.com/latex/microtype/
+%%% http://www.khirevich.com/latex/microtype/Microtype_example_ani.gif
+\RequirePackage[tracking=true]{microtype}
+
+%%% Protrusion - позволяет символам пересекать границу отступа для увеличения визуального 
+%%% ощущения однородности границ текста.
+%%%
+%%% http://en.wikipedia.org/wiki/Hanging_punctuation
+\SetProtrusion
+{
+    encoding = T2A,
+    family = *
+}
+{
+    « = {900,     },
+    » = {    , 900},
+    „ = {1000,     },
+    “ = {    , 1000},
+    ( = {400,     },
+    ) = {    , 400},
+    ! = {    , 1000},
+    ? = {    , 1000},
+    : = {    , 1000},
+    ; = {    , 1000},
+    . = {    , 1000},
+    - = {    ,  700},
+    {,}= {    , 1000}
+}
+
+%%% Tracking. (Прописные буквы всегда разрежаются, строчные — никогда.)
+%%% http://www.artlebedev.ru/kovodstvo/sections/142/
+%%% Устанавливается разрядка букв для вида \textsc{}.
+\SetTracking{encoding={*}, shape=sc}{40}
+
+%%% Первый абзац раздела начинается с красной строки. По-умолчанию отступа нет.
+%%% Переносы слов.
+\RequirePackage{
+    indentfirst,
+    hyphenat
+}
+
+\hyphenpenalty=6000
+\tolerance=1000
+
+%%% The \flushbottom declaration makes all text pages the same height, adding extra vertical space when necessary to fill out the page.
+\flushbottom
+
+\pagestyle{fancy}
+
+
+%%% Работа с листингами программ.
+
+%%% Listings in foonotes included with \cprotect
+\RequirePackage{cprotect}
+\RequirePackage{listings}
+\renewcommand{\lstlistingname}{Листинг}
+\definecolor{verywhite}{gray}{1}
+\lstset{
+    basicstyle=\ttfamily,
+    columns=fullflexible,
+    backgroundcolor=\color{verywhite}, 
+    showstringspaces=false, 
+    showspaces=false,
+    keywordstyle=\bfseries,
+    keepspaces=true,
+    captionpos=b,
+%    inputencoding=cp1251,
+%    extendedchars=true
+}
+% Грязный Hack. Русские буквы в листингах.
+\lstset{
+ literate={а}{{\selectfont\char224}}1
+ {б}{{\selectfont\char225}}1
+ {в}{{\selectfont\char226}}1
+ {г}{{\selectfont\char227}}1
+ {д}{{\selectfont\char228}}1
+ {е}{{\selectfont\char229}}1
+ {ё}{{\"e}}1
+ {ж}{{\selectfont\char230}}1
+ {з}{{\selectfont\char231}}1
+ {и}{{\selectfont\char232}}1
+ {й}{{\selectfont\char233}}1
+ {к}{{\selectfont\char234}}1
+ {л}{{\selectfont\char235}}1
+ {м}{{\selectfont\char236}}1
+ {н}{{\selectfont\char237}}1
+ {о}{{\selectfont\char238}}1
+ {п}{{\selectfont\char239}}1
+ {р}{{\selectfont\char240}}1
+ {с}{{\selectfont\char241}}1
+ {т}{{\selectfont\char242}}1
+ {у}{{\selectfont\char243}}1
+ {ф}{{\selectfont\char244}}1
+ {х}{{\selectfont\char245}}1
+ {ц}{{\selectfont\char246}}1
+ {ч}{{\selectfont\char247}}1
+ {ш}{{\selectfont\char248}}1
+ {щ}{{\selectfont\char249}}1
+ {ъ}{{\selectfont\char250}}1
+ {ы}{{\selectfont\char251}}1
+ {ь}{{\selectfont\char252}}1
+ {э}{{\selectfont\char253}}1
+ {ю}{{\selectfont\char254}}1
+ {я}{{\selectfont\char255}}1
+ {А}{{\selectfont\char192}}1
+ {Б}{{\selectfont\char193}}1
+ {В}{{\selectfont\char194}}1
+ {Г}{{\selectfont\char195}}1
+ {Д}{{\selectfont\char196}}1
+ {Е}{{\selectfont\char197}}1
+ {Ё}{{\"E}}1
+ {Ж}{{\selectfont\char198}}1
+ {З}{{\selectfont\char199}}1
+ {И}{{\selectfont\char200}}1
+ {Й}{{\selectfont\char201}}1
+ {К}{{\selectfont\char202}}1
+ {Л}{{\selectfont\char203}}1
+ {М}{{\selectfont\char204}}1
+ {Н}{{\selectfont\char205}}1
+ {О}{{\selectfont\char206}}1
+ {П}{{\selectfont\char207}}1
+ {Р}{{\selectfont\char208}}1
+ {С}{{\selectfont\char209}}1
+ {Т}{{\selectfont\char210}}1
+ {У}{{\selectfont\char211}}1
+ {Ф}{{\selectfont\char212}}1
+ {Х}{{\selectfont\char213}}1
+ {Ц}{{\selectfont\char214}}1
+ {Ч}{{\selectfont\char215}}1
+ {Ш}{{\selectfont\char216}}1
+ {Щ}{{\selectfont\char217}}1
+ {Ъ}{{\selectfont\char218}}1
+ {Ы}{{\selectfont\char219}}1
+ {Ь}{{\selectfont\char220}}1
+ {Э}{{\selectfont\char221}}1
+ {Ю}{{\selectfont\char222}}1
+ {Я}{{\selectfont\char223}}1
+ }
+
+%%% The Latin Modern family of fonts consists of 72 text fonts and 20 mathematics fonts, 
+%%% and is based on the Computer Modern fonts released into public domain by AMS (copyright © 1997 AMS). 
+%
+% \RequirePackage[T1]{fontenc} 
+% \RequirePackage{lmodern}
+
+% makeatletter changes binding of @ from 12 to 11
+% makeatother  changes binding of @ from 11 to 12
+%\makeatletter
+%\renewcommand{\@biblabel}[1]{#1.\hfill}
+%\makeatother
+
+%%% Включение файла с пользовательскими математическими функциями.
+\input custom-math.tex
