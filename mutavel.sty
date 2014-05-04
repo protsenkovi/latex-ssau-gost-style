@@ -88,14 +88,14 @@
 %%% \clearpage заставляет все отложенные до команды фигуры, таблицы, листинги отрисоваться, \newpage - команда начала новой страницы.
 \newcommand{\sectionFormat}[1]{
     \tolerance=10000                         % Отсутствие возможности длинным словам вылезать за пределы границы отступа.
-    \raggedright                             % Хз.
-    \nohyphens{\textbf{#1}}                  % Запрет переносов.
+    \raggedright                             % Сбивка слов влево. По-умолчанию слова растягиваются по всей строке, равномерно заполняя пространство между словами пробелами.
+    \nohyphens{#1}                  % Запрет переносов.
 }
 
 \titleformat{name=\section}[block]
     {\Large\bfseries}
     {\hspace*{\normalparindent}\thesection}  % Запись с абзацного отступа.
-    {0em}                                    % Без дополнительного пробела между номером и тектом заголовка.
+    {0em}                                    % Без дополнительного пробела между номером и текстом заголовка.
     {\sectionFormat}                         
 
 \titleformat{name=\subsection}[block]
@@ -110,6 +110,14 @@
     {0em}
     {\sectionFormat}
 
+%%% 5.4.2 (В содержании) Введение, заключение, список использованных источников и приложения не нумеруются как разделы. 
+
+%%% Временное отключение добавления в toc. "Введение" и "Заключение" без номера, добавляются. "Содержание" без номера, не добавляется.
+\RequirePackage{tocloft}
+
+\renewcommand{\cfttoctitlefont}{\hfill\Large\bfseries\MakeUppercase}
+\renewcommand{\cftaftertoctitle}{\hfill}
+
 %%% 4.1.1 Структурными элементами учебного текстового документа в порядке их расположения в документе являются:
 %%% титульный лист, задание(при наличии), реферат, содержание, определения/обозначения/сокращения(при наличии),
 %%% введение, основная часть, заключение, список использованных источников(при наличии), приложения(при наличии).
@@ -117,25 +125,79 @@
 %%% 4.1.2 .. Заголовки структурных элементов следует располагать в середине строки без точки в конце и печатать прописными буквами, 
 %%% не подчёркивая, например ВВЕДЕНИЕ, ЗАКЛЮЧЕНИЕ.
 \newcommand{\structureElementFormat}[1]{
-    \tolerance=10000 
-    \raggedright 
-    \centering
-    \nohyphens{\MakeUppercase{#1}}        % Прописные буквы.
-    \addcontentsline{toc}{section}{#1}    % Добавление в toc.
+    \tolerance=10000     
+    \nohyphens{#1}        
 }
 % titleformat command parameters:
 \titleformat{name=\section, numberless=true}[block] % [shape]
     {\Large\bfseries}                               % format
     {}                                              % label
     {0em}                                           % separation
-    {\structureElementFormat}                       % before section text.
+    {\sectionFormat}                       % before section text.
 
-%%% 5.4.2 (В содержании) Введение, заключение, список использованных источников и приложения не нумеруются как разделы. 
 
-%%% Временное отключение добавления в toc. "Введение" и "Заключение" без номера, добавляются. "Содержание" без номера, не добавляется.
-\newcommand{\nocontentsline}[3]{}
-\newcommand{\tocless}[2]{\bgroup\let\addcontentsline=\nocontentsline#1{#2}\egroup}
-\newcommand{\tableOfContents}{\tocless\tableofcontents\newpage} 
+% Структурный элемент: реферат. 
+% В тексте прописными, в центре страницы, жирным, не добавляется в содержание.
+\newcommand{\summarytitle}{  
+    \section*{\hfillРЕФЕРАТ\hfill}
+}
+
+% Структурный элемент: введение. 
+% В тексте прописными, в центре страницы, жирным, добавляется в содержание, в содержании с большой буквы.
+\newcommand{\introductiontitle}{  
+    \section*{\hfillВВЕДЕНИЕ\hfill}
+    \addcontentsline{toc}{section}{Введение}  % Добавление в toc.
+}
+
+% Структурный элемент: заключение. 
+% В тексте прописными,в центре страницы, жирным, добавляется в содержание, в содержании с большой буквы.
+\newcommand{\conclusiontitle}{
+    \section*{\hfillЗАКЛЮЧЕНИЕ\hfill}
+    \addcontentsline{toc}{section}{Заключение} % Добавление в toc.
+}
+
+% Структурный элемент: приложение. 
+% В тексте прописными, в центре страницы, жирным, добавляется в содержание, в две строки ПРИЛОЖЕНИЕ #1, на следующей название,
+%   в содержании в одну строку ПРИЛОЖЕНИЕ #1 Название.
+\newcounter{appendix}
+\newcommand{\appendixtitle}[1]{
+    \clearpage\newpage
+    \titleformat{name=\section,numberless=true}[block]{\Large\bfseries}{}{1em}{\centering}          % Should be set only once i guess.
+    \stepcounter{appendix}
+    \section*{ПРИЛОЖЕНИЕ \Asbuk{appendix} \\   #1}
+    \addcontentsline{toc}{section}{ПРИЛОЖЕНИЕ \Asbuk{appendix}\quad#1} % Добавление в toc.
+}
+
+% Счётчики для страницы реферата. Подсчёт общего количества элементов: иллюстраций, таблиц, приложений, страниц, источников. 
+% Необходима компиляция двухэтапная компиляция (запустить два раза подряд). (Источник http://habrahabr.ru/post/144648/)
+\newcounter{totpages}
+\newcounter{totfigures}
+\newcounter{tottables}
+\newcounter{totreferences}
+\newcounter{totappendixes}
+\makeatletter
+    \AtEndDocument{%
+      \clearpage
+      \addtocounter{page}{-1}
+      \addtocounter{totreferences}{-1}
+      \addtocounter{totpages}{\value{page}}
+      \addtocounter{totfigures}{\value{figure}}%
+      \addtocounter{tottables}{\value{table}}%
+      \addtocounter{totappendixes}{\value{appendix}}
+      \immediate\write\@mainaux{%
+        \string\gdef\string\totpages{\number\value{totpages}}%
+        \string\gdef\string\totfig{\number\value{totfigures}}%
+        \string\gdef\string\tottab{\number\value{tottables}}
+        \string\gdef\string\totbibref{\number\value{totreferences}}
+        \string\gdef\string\totappendix{\number\value{totappendixes}}%    
+      }%
+    }
+    \renewcommand{\@biblabel}[1]{\stepcounter{totreferences}#1}
+\makeatother
+
+
+
+
 
 %%% 4.2.1 Страницы учебного текстового документа и приложений, входящих в него, следует нумеровать арабскими цифрами, соблюдая сквозную 
 %%% нумерацию по всему тексту. Номер страницы проставляется в центре нижней части листа без точки.
@@ -231,7 +293,7 @@
 %%% Подключение пакета subfigure, настройка подписей: начинаются с буквы. По-умолчанию, что-то другое. TODO ошибка счётчика при подключении.
 % \RequirePackage{subfig}
 % \renewcommand{\thesubfigure}{\asbuk{subfigure}}
-
+\RequirePackage{subfloat}
 
 %%% Работа с общим форматированием текста. 
 
