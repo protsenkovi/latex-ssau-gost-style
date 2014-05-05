@@ -3,10 +3,33 @@
 %%% Стиль создан для соответствия документа общим требованиям к оформлению текстовых документов (СТО СГАУ 02068410-004-2007) в СГАУ.
 %%% Ниже краткого описания будут приведены цитаты из стандарта, комментирующие настройки стиля.
 
+%%% В файле стиле добавлены дополнительные команды для добавления заголовков структурных элементов документа:
+%%%   \summarytitle, \introductiontitle, \conclusiontitle, \appendixtitle.
+%%% Причина - разные стили для разных элементов.
+%%% Цитата из гост с рекомендованным способом оформления (звёздочкой обозначены необязательные элементы):
+%%%   <<4.1.1 Структурными элементами учебного текстового документа в порядке их расположения в документе являются:
+%%%   титульный лист,                      (вставляется файл c бланком \input{title.tex})
+%%%   задание*,                            (вставляется файл c бланком задания\input{task.tex})
+%%%   реферат,                             (в документе \summarytitle. Формат: прописными в центре без номера, в содержание не добавляется.)
+%%%   содержание,                          (заголовок включён в стандартную команду \tableofcontents)
+%%%   определения/обозначения/сокращения*,
+%%%   введение,                            (в документе \introductiontitle. Формат: прописными в центре без номера, в содержание добавляется.)
+%%%   основная часть,                      (в документе команды \section, \subsection, \subsubsection и тд.)
+%%%   заключение,                          (в документе \conclusiontitle. Формат: прописными в центре без номера, в содержание добавляется.)
+%%%   список использованных источников*    (заголовок включен в окружение \begin{thebibliography} \end{thebibliography}.), 
+%%%   приложения*.                         (в документе \appendixtitle. Формат: прописными в центре с буквенной нумерацией
+%%%                                         в две строки, например: первая строка ПРИЛОЖЕНИЕ А, вторая заголовок приложения. 
+%%%                                         В содержание добавляется каждое приложение.) >>
+
+%%% В файле добавлена возможность подсчёта общего количества иллюстраций, таблиц, страниц, источников, приложений. 
+%%% Значения можно использовать при оформлении реферата следующим образом:
+%%%   <<Выпускная квалификационная работа: \totpages~c., \totfig~рисунка, \tottab~таблицы, \totbibref~источников, \totappendix~приложения.>>
+
 %%% Оформление иллюстраций в документе необходимо делать следующим образом:
-%%% \begin{figure}[h] \label{fig:figure1}
+%%% \begin{figure}[h] 
 %%%   \includegraphics{figirefilename}
 %%%   \caption{Подпись к рисунку без точки в конце}
+%%%   \label{fig:figure1} 
 %%% \end{figure}
 %%% Параметр h - означает попытку вставки иллюстрации там, где располагается приведённый код latex.
 %%% То есть для текста <<... как показано на рисунке \ref{fig:figure1}. \begin{figure} ... \end{figure}
@@ -17,12 +40,13 @@
 %%% на метку с помощью команды \ref, подставляющей в текст номер, присвоенный элементу, к которому относится метка.
 
 %%% Оформление таблиц в документе осуществляется практически также как и иллюстраций:
-%%% \begin{table}[h] \label{tab:table1}
+%%% \begin{table}[h] 
 %%%   \caption{Подпись к таблице без точки в конце}
 %%%   \begin{tabular}{|c|c|c|} \hline
 %%%       Количество 1 & Количество 2 & Сумма \\ \hline
 %%%           1        &        2     &   3   \\ \hline
 %%%   \end{tabular}
+%%%   \label{tab:table1} 
 %%% \end{table}
 %%% Об особенностях оформления самой таблицы частично написано в этом файле ниже, при настройке инструментов
 %%% для работы с таблицами. Полная версия находится в стандарте.
@@ -30,6 +54,9 @@
 %%% центрированием текста посередине. Каждый столбец отделён вертикальной чертой. Для отделения 
 %%% строк используется \hline. Символом & разделяются данные таблицы на колонки.
 
+
+% Для внутренних нужд. Используемая функция \widthof.
+\usepackage{calc}
 
 %%% Подключение кодировки шрифта (соответствие буква - глиф), под вопросом может и не так.
 %%% кодировки файла документа (соответствие номер - буква),  под вопросом может и не так.
@@ -86,35 +113,38 @@
 %%% Ниже добавляются абзацные отступы - установка \hangindent вручную, а также запрет на перенос слов - \nohyphens запрещает переносы, 
 %%%   высокое значение \tolerance не даёт длинным словам выходить за границу текста, выполняя перенос слова на новую строку.
 %%% \clearpage заставляет все отложенные до команды фигуры, таблицы, листинги отрисоваться, \newpage - команда начала новой страницы.
-\newcommand{\sectionFormat}[1]{
-    \tolerance=10000                         % Отсутствие возможности длинным словам вылезать за пределы границы отступа.
-    \raggedright                             % Сбивка слов влево. По-умолчанию слова растягиваются по всей строке, равномерно заполняя пространство между словами пробелами.
-    \nohyphens{#1}                  % Запрет переносов.
+\newcommand{\sectionFormat}[2][0em]{
+         \begin{minipage}[t]{\textwidth-\normalparindent-\widthof{\quad#1}}   % \quad is hardcoded value for separator between number and body.
+             \tolerance=10000             % Отсутствие возможности длинным словам вылезать за пределы границы отступа.
+             \raggedright                 % Сбивка слов влево. По-умолчанию слова растягиваются по всей строке, равномерно заполняя пространство между словами пробелами. 
+             \nohyphens{#2}
+         \end{minipage}
 }
 
 \titleformat{name=\section}[block]
-    {\Large\bfseries}
-    {\hspace*{\normalparindent}\thesection}  % Запись с абзацного отступа.
-    {0em}                                    % Без дополнительного пробела между номером и текстом заголовка.
-    {\sectionFormat}                         
+            {\Large\bfseries}                        % 
+            {\hspace*{\normalparindent}\thesection}  % Запись с абзацного отступа. 
+            {0em}                                    % Без дополнительного пробела между номером и текстом заголовка.
+            {\sectionFormat[\thesection]}  
+
 
 \titleformat{name=\subsection}[block]
     {\large\bfseries}
     {\hspace*{\normalparindent}\thesubsection}
     {0em}
-    {\sectionFormat}
+    {\sectionFormat[\thesubsection]}
 
 \titleformat{name=\subsubsection}[block]
     {\large\bfseries}
     {\hspace*{\normalparindent}\thesubsubsection}
     {0em}
-    {\sectionFormat}
+    {\sectionFormat[\thesubsubsection]}
 
 %%% 5.4.2 (В содержании) Введение, заключение, список использованных источников и приложения не нумеруются как разделы. 
 
-%%% Временное отключение добавления в toc. "Введение" и "Заключение" без номера, добавляются. "Содержание" без номера, не добавляется.
+%%% Оформление содержания.
 \RequirePackage{tocloft}
-
+%%% Центрирование заголовка содержания, стиль: размер шрифта \Large, жирный.
 \renewcommand{\cfttoctitlefont}{\hfill\Large\bfseries\MakeUppercase}
 \renewcommand{\cftaftertoctitle}{\hfill}
 
@@ -133,13 +163,12 @@
     {\Large\bfseries}                               % format
     {}                                              % label
     {0em}                                           % separation
-    {\sectionFormat}                       % before section text.
-
+    {}                                              % before section text.
 
 % Структурный элемент: реферат. 
 % В тексте прописными, в центре страницы, жирным, не добавляется в содержание.
-\newcommand{\summarytitle}{  
-    \section*{\hfillРЕФЕРАТ\hfill}
+\newcommand{\summarytitle}{
+    \section*{\hfillРЕФЕРАТ\hfill}    
 }
 
 % Структурный элемент: введение. 
@@ -169,7 +198,8 @@
 }
 
 % Счётчики для страницы реферата. Подсчёт общего количества элементов: иллюстраций, таблиц, приложений, страниц, источников. 
-% Необходима компиляция двухэтапная компиляция (запустить два раза подряд). (Источник http://habrahabr.ru/post/144648/)
+% Необходима компиляция двухэтапная компиляция (запустить два раза подряд). (Источник http://habrahabr.ru/post/144648/) 
+% TODO Ругань при первом запуске - отсутствии счётчиков в .aux.
 \newcounter{totpages}
 \newcounter{totfigures}
 \newcounter{tottables}
@@ -181,23 +211,19 @@
       \addtocounter{page}{-1}
       \addtocounter{totreferences}{-1}
       \addtocounter{totpages}{\value{page}}
-      \addtocounter{totfigures}{\value{figure}}%
-      \addtocounter{tottables}{\value{table}}%
+      \addtocounter{totfigures}{\value{figure}}
+      \addtocounter{tottables}{\value{table}}
       \addtocounter{totappendixes}{\value{appendix}}
-      \immediate\write\@mainaux{%
-        \string\gdef\string\totpages{\number\value{totpages}}%
-        \string\gdef\string\totfig{\number\value{totfigures}}%
+      \immediate\write\@mainaux{
+        \string\gdef\string\totpages{\number\value{totpages}}
+        \string\gdef\string\totfig{\number\value{totfigures}}
         \string\gdef\string\tottab{\number\value{tottables}}
         \string\gdef\string\totbibref{\number\value{totreferences}}
-        \string\gdef\string\totappendix{\number\value{totappendixes}}%    
-      }%
+        \string\gdef\string\totappendix{\number\value{totappendixes}}
+      }
     }
     \renewcommand{\@biblabel}[1]{\stepcounter{totreferences}#1}
 \makeatother
-
-
-
-
 
 %%% 4.2.1 Страницы учебного текстового документа и приложений, входящих в него, следует нумеровать арабскими цифрами, соблюдая сквозную 
 %%% нумерацию по всему тексту. Номер страницы проставляется в центре нижней части листа без точки.
@@ -444,9 +470,13 @@
 
 % makeatletter changes binding of @ from 12 to 11
 % makeatother  changes binding of @ from 11 to 12
-%\makeatletter
-%\renewcommand{\@biblabel}[1]{#1.\hfill}
-%\makeatother
+
+% Формат списка источников. По-умолчанию <<[1]>>, в стандарте <<1.>>.
+\makeatletter
+\renewcommand{\@biblabel}[1]{#1.\hfill}
+\makeatother
+% Заголовок списка использованных источников. По-умолчанию <<Список литературы>>.
+\AtBeginDocument{\renewcommand{\refname}{\large\hfillСПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ\hfill}}
 
 %%% Включение файла с пользовательскими математическими функциями.
 \input custom-math.tex
