@@ -5,8 +5,8 @@
 
 %%% В файле стиле добавлены дополнительные команды для добавления заголовков структурных элементов документа:
 %%%   \summarytitle, \introductiontitle, \conclusiontitle, \appendixtitle.
-%%% Причина - разные стили для разных элементов.
-%%% Цитата из гост с рекомендованным способом оформления (звёздочкой обозначены необязательные элементы):
+%%% По причине разных стилей у разных элементов.
+%%% Цитата из гост с рекомендованным способом оформления при использовании этого файла(звёздочкой обозначены необязательные элементы):
 %%%   <<4.1.1 Структурными элементами учебного текстового документа в порядке их расположения в документе являются:
 %%%   титульный лист,                      (вставляется файл c бланком \input{title.tex})
 %%%   задание*,                            (вставляется файл c бланком задания\input{task.tex})
@@ -55,7 +55,7 @@
 %%% строк используется \hline. Символом & разделяются данные таблицы на колонки.
 
 
-% Для внутренних нужд. Используемая функция \widthof.
+% Для внутренних нужд. Используемая функция - \widthof.
 \usepackage{calc}
 
 %%% Подключение кодировки шрифта (соответствие буква - глиф), под вопросом может и не так.
@@ -64,11 +64,11 @@
 \RequirePackage[T2A]{fontenc} 
 \RequirePackage[utf8]{inputenc}
 \RequirePackage[russian]{babel}
-%%% Пакет misccorr основан на russcorr (Сергей Львовский) и других источниках.
+%%% Пакет misccorr основан на russcorr (Сергей Львовский) и других источниках. TODO Проверить нужен ли.
 %%% Используется в дополнении (и должен использоваться) к пакету babel, загруженному с 
 %%%   опцией russian.
 %%% Добавляются точки после номера раздела и тд.
-\RequirePackage{misccorr}
+\RequirePackage{misccorr} 
 %%% Documentation of the complete set of font-enc http://latex-project.org/guides/cyrguide.pdf
 
 %%% 3.1 Учебный документ выполняется на одной стороне листа бумаги белого цвета А4 (210x297 мм).
@@ -101,32 +101,28 @@
 \newlength{\normalparindent}
 \AtBeginDocument{\setlength{\normalparindent}{\parindent}} 
 
+%%% 4.1.10 Каждый раздел учебного текстового документа следует начинать с новой страницы.
+%%% \clearpage заставляет все отложенные до команды фигуры, таблицы, листинги отрисоваться, \newpage - команда начала новой страницы.
+\newcommand{\sectionbreak}{\clearpage\newpage}
+
 %%% 4.1.9 Разделы и подразделы должны иметь заголовки. Пункты и подпункты, как правило, заголовков не имеют. Заголовки должны чётко и
 %%% кратко отражать содержание разделов и подразделов. Заголовки начинаются с прописной буквы, без точки в конце (ответственность 
 %%% оформителя), не подчеркиваются. Переносы слов в заголовках не допускаются. ...
 
-%%% 4.1.10 Каждый раздел учебного текстового документа следует начинать с новой страницы.
-\newcommand{\sectionbreak}{\clearpage\newpage}
-
-%%% Latex по-умолчанию нумерует разделы, подразделы, пункты арабскими цифрами. Выполняются требования абзаца о разделении 
-%%%   номеров точкой.
-%%% Ниже добавляются абзацные отступы - установка \hangindent вручную, а также запрет на перенос слов - \nohyphens запрещает переносы, 
-%%%   высокое значение \tolerance не даёт длинным словам выходить за границу текста, выполняя перенос слова на новую строку.
-%%% \clearpage заставляет все отложенные до команды фигуры, таблицы, листинги отрисоваться, \newpage - команда начала новой страницы.
+%%% Latex по-умолчанию нумерует разделы, подразделы, пункты арабскими цифрами. Выполняются требования абзаца о разделении номеров точкой.
+%%% Ниже добавляются: абзацные отступы, запрещается перенос слов, новая строка начинается под первым словом предыдущей.
 \newcommand{\sectionFormat}[2][0em]{
          \begin{minipage}[t]{\textwidth-\normalparindent-\widthof{\quad#1}}   % \quad is hardcoded value for separator between number and body.
              \tolerance=10000             % Отсутствие возможности длинным словам вылезать за пределы границы отступа.
              \raggedright                 % Сбивка слов влево. По-умолчанию слова растягиваются по всей строке, равномерно заполняя пространство между словами пробелами. 
              \nohyphens{#2}
-         \end{minipage}
-}
+         \end{minipage}}
 
 \titleformat{name=\section}[block]
-            {\Large\bfseries}                        % 
+            {\Large\bfseries}                        % Стиль.
             {\hspace*{\normalparindent}\thesection}  % Запись с абзацного отступа. 
             {0em}                                    % Без дополнительного пробела между номером и текстом заголовка.
             {\sectionFormat[\thesection]}  
-
 
 \titleformat{name=\subsection}[block]
     {\large\bfseries}
@@ -191,15 +187,15 @@
 \newcounter{appendix}
 \newcommand{\appendixtitle}[1]{
     \clearpage\newpage
-    \titleformat{name=\section,numberless=true}[block]{\Large\bfseries}{}{1em}{\centering}          % Should be set only once i guess.
+    \titleformat{name=\section,numberless=true}[block]{\Large\bfseries}{}{1em}{\centering}  % Should be set only once i guess.
     \stepcounter{appendix}
-    \section*{ПРИЛОЖЕНИЕ \Asbuk{appendix} \\   #1}
-    \addcontentsline{toc}{section}{ПРИЛОЖЕНИЕ \Asbuk{appendix}\quad#1} % Добавление в toc.
+    \section*{ПРИЛОЖЕНИЕ \Asbuk{appendix} \\   #1} 
+    \phantomsection                                                                         % Explanation for hyperref.
+    \addcontentsline{toc}{section}{ПРИЛОЖЕНИЕ \Asbuk{appendix}\quad#1}                      % Добавление в toc.
 }
 
 % Счётчики для страницы реферата. Подсчёт общего количества элементов: иллюстраций, таблиц, приложений, страниц, источников. 
 % Необходима компиляция двухэтапная компиляция (запустить два раза подряд). (Источник http://habrahabr.ru/post/144648/) 
-% TODO Ругань при первом запуске - отсутствии счётчиков в .aux.
 \newcounter{totpages}
 \newcounter{totfigures}
 \newcounter{tottables}
@@ -221,9 +217,13 @@
         \string\gdef\string\totbibref{\number\value{totreferences}}
         \string\gdef\string\totappendix{\number\value{totappendixes}}
       }
-    }
-    \renewcommand{\@biblabel}[1]{\stepcounter{totreferences}#1}
+    }    
 \makeatother
+\gdef\totpages{??}
+\gdef\totfig{??}
+\gdef\tottab{??}
+\gdef\totbibref{??}
+\gdef\totappendix{??}
 
 %%% 4.2.1 Страницы учебного текстового документа и приложений, входящих в него, следует нумеровать арабскими цифрами, соблюдая сквозную 
 %%% нумерацию по всему тексту. Номер страницы проставляется в центре нижней части листа без точки.
@@ -238,7 +238,17 @@
 \cfoot{\bfseries\thepage}
 \renewcommand{\headrulewidth}{0pt}
 
+%%%
+%%% Работа с оформлением списков, перечислений.
+%%%
+%%% Кружок по-умолчанию заменяется меткой короткое тире.
+\usepackage{enumitem}
+\renewcommand{\labelitemi}{--}
+% \setlist[itemize,1]{leftmargin=4em}
+
+%%%
 %%% Работа с ссылками в электронной версии документа.
+%%%
 %%% The hyperref package is used to handle cross-referencing commands in LaTeX to produce hypertext links in the document.
 %%% Создание цветовой схемы в чёрно-чёрных тонах, используемой для выделения ссылок внутри документа, веб-ссылок, ссылок на файлы.
 \RequirePackage{color}
@@ -262,9 +272,9 @@
 %%% LGR (Greek) and a variant OT1tt for cmtt-like fonts.
 \RequirePackage{cmap}
 
-
+%%%
 %%% Работа с математикой. 
-
+%%%
 %%% Подключение основных математических пакетов.
 \RequirePackage{
     amsmath,
@@ -273,9 +283,15 @@
 %    mathrsfs Provides a \mathscr command, rather than overwriting the standard \mathcal command, as in calrsfs. TODO
 }
 
+%%%
+%%% Общее дял таблиц и графиков.
+%%%
+% Рис 1. -> Рис 1 --, Таблица 1. -> Таблица 1 --
+\RequirePackage[labelsep=endash]{caption} 
 
+%%%
 %%% Работа с таблицами.
-
+%%%
 %%% 6.2.2 Таблицу следует располагать в документе непосредственно после текста, в котором она впервые упоминается, или на следующей странице.
 %%% 6.2.3 На все таблицы должны быть ссылки в документе. При ссылке в тексте следует писать слово <<таблица>> с указанием её номера, например <<анализ таблицы 3 показывает, что>>, в latex <<анализ таблицы \ref{tab:tab1} показывает, что>>.
 %%% 6.2.5 Наименование таблицы, при его наличии, должно отражать её содержание, быть точным и кратким. Наименование помещается над таблицей слева, без абзацного отступа, после слова <<Таблица>>, с прописной буквы, в одну строку с её номером, через тире. Точка в конце наименования таблицы не ставится.
@@ -290,10 +306,11 @@
     multirow,
     colortbl
 }
+\captionsetup[table]{singlelinecheck=off, justification=raggedright}
 
-
+%%%
 %%% Работа с графикой.
-
+%%%
 %%% Возможность подключения изображений с помощью \includegraphics. Подписи к рисункам добавляются 
 %%% командой \caption, например:
 %%% \begin{figure} \includegraphics{photo} \caption{Подпись} \end{figure}
@@ -312,17 +329,16 @@
 %%% 6.1.2 Иллюстрации следует располагать непосредственно после текста, в котором они упоминаются впервые, на следующей странице или в приложениях. На каждую иллюстрацию должна быть ссылка в тексте. Иллюстрации в текстовом документе обозначаются как рисунки.
 %%% 6.1.5 Иллюстрации, за исключением иллюстраций в приложениях, нумеруются сквозной нумерацией арабскими цифрами (по-умолчанию в latex). Если в документе одна иллюстрация, то она обозначается <<Рисунок 1>>.
 %%% 6.1.8 Иллюстрации, при необходимости, могут иметь наименования и пояснительные данные (подрисуночный текст). Пояснительные данные располагаются под иллюстрацией. Слово <<Рисунок>>, его номер и через тире наименование иллюстраций, с прописной буквы без точки в конце, помещаются ниже иллюстрации, после пояснительных данных, например - Рисунок 1.12 -- Детали прибора.
-\RequirePackage[labelsep=endash]{caption} % Рис 1. -> Рис 1 ---
-\RequirePackage{subcaption}
+%\RequirePackage{subcaption}
 \captionsetup[figure]{name=Рисунок}       % Рис 1. -> Рисунок 1
 
-%%% Подключение пакета subfigure, настройка подписей: начинаются с буквы. По-умолчанию, что-то другое. TODO ошибка счётчика при подключении.
-% \RequirePackage{subfig}
-% \renewcommand{\thesubfigure}{\asbuk{subfigure}}
-\RequirePackage{subfloat}
+%%% Подключение пакета subfigure, настройка подписей: русские буквы в скобках, вместо английских. 
+\RequirePackage{subfig} 
+\renewcommand{\thesubfigure}{\asbuk{subfigure}}
 
+%%%
 %%% Работа с общим форматированием текста. 
-
+%%%
 %%% http://www.khirevich.com/latex/microtype/
 %%% http://www.khirevich.com/latex/microtype/Microtype_example_ani.gif
 \RequirePackage[tracking=true]{microtype}
@@ -370,11 +386,9 @@
 %%% The \flushbottom declaration makes all text pages the same height, adding extra vertical space when necessary to fill out the page.
 \flushbottom
 
-\pagestyle{fancy}
-
-
+%%%
 %%% Работа с листингами программ.
-
+%%%
 %%% Listings in foonotes included with \cprotect
 \RequirePackage{cprotect}
 \RequirePackage{listings}
@@ -389,92 +403,22 @@
     keywordstyle=\bfseries,
     keepspaces=true,
     captionpos=b,
-%    inputencoding=cp1251,
-%    extendedchars=true
+    extendedchars=\true
 }
-% Грязный Hack. Русские буквы в листингах.
-\lstset{
- literate={а}{{\selectfont\char224}}1
- {б}{{\selectfont\char225}}1
- {в}{{\selectfont\char226}}1
- {г}{{\selectfont\char227}}1
- {д}{{\selectfont\char228}}1
- {е}{{\selectfont\char229}}1
- {ё}{{\"e}}1
- {ж}{{\selectfont\char230}}1
- {з}{{\selectfont\char231}}1
- {и}{{\selectfont\char232}}1
- {й}{{\selectfont\char233}}1
- {к}{{\selectfont\char234}}1
- {л}{{\selectfont\char235}}1
- {м}{{\selectfont\char236}}1
- {н}{{\selectfont\char237}}1
- {о}{{\selectfont\char238}}1
- {п}{{\selectfont\char239}}1
- {р}{{\selectfont\char240}}1
- {с}{{\selectfont\char241}}1
- {т}{{\selectfont\char242}}1
- {у}{{\selectfont\char243}}1
- {ф}{{\selectfont\char244}}1
- {х}{{\selectfont\char245}}1
- {ц}{{\selectfont\char246}}1
- {ч}{{\selectfont\char247}}1
- {ш}{{\selectfont\char248}}1
- {щ}{{\selectfont\char249}}1
- {ъ}{{\selectfont\char250}}1
- {ы}{{\selectfont\char251}}1
- {ь}{{\selectfont\char252}}1
- {э}{{\selectfont\char253}}1
- {ю}{{\selectfont\char254}}1
- {я}{{\selectfont\char255}}1
- {А}{{\selectfont\char192}}1
- {Б}{{\selectfont\char193}}1
- {В}{{\selectfont\char194}}1
- {Г}{{\selectfont\char195}}1
- {Д}{{\selectfont\char196}}1
- {Е}{{\selectfont\char197}}1
- {Ё}{{\"E}}1
- {Ж}{{\selectfont\char198}}1
- {З}{{\selectfont\char199}}1
- {И}{{\selectfont\char200}}1
- {Й}{{\selectfont\char201}}1
- {К}{{\selectfont\char202}}1
- {Л}{{\selectfont\char203}}1
- {М}{{\selectfont\char204}}1
- {Н}{{\selectfont\char205}}1
- {О}{{\selectfont\char206}}1
- {П}{{\selectfont\char207}}1
- {Р}{{\selectfont\char208}}1
- {С}{{\selectfont\char209}}1
- {Т}{{\selectfont\char210}}1
- {У}{{\selectfont\char211}}1
- {Ф}{{\selectfont\char212}}1
- {Х}{{\selectfont\char213}}1
- {Ц}{{\selectfont\char214}}1
- {Ч}{{\selectfont\char215}}1
- {Ш}{{\selectfont\char216}}1
- {Щ}{{\selectfont\char217}}1
- {Ъ}{{\selectfont\char218}}1
- {Ы}{{\selectfont\char219}}1
- {Ь}{{\selectfont\char220}}1
- {Э}{{\selectfont\char221}}1
- {Ю}{{\selectfont\char222}}1
- {Я}{{\selectfont\char223}}1
- }
+%%% Альтернатива extendedchars=\true. Русские буквы в листингах, наклонные, жирным.
+%%% http://roman.khimov.ru/2011/05/19/latex-listings-cyrillic/
+%%% http://mydebianblog.blogspot.ru/2012/12/latex.html
 
-%%% The Latin Modern family of fonts consists of 72 text fonts and 20 mathematics fonts, 
-%%% and is based on the Computer Modern fonts released into public domain by AMS (copyright © 1997 AMS). 
-%
-% \RequirePackage[T1]{fontenc} 
-% \RequirePackage{lmodern}
-
-% makeatletter changes binding of @ from 12 to 11
-% makeatother  changes binding of @ from 11 to 12
-
-% Формат списка источников. По-умолчанию <<[1]>>, в стандарте <<1.>>.
+%%%
+%%% Работа с библиографическим списком.
+%%%
+%%% Формат списка источников. По-умолчанию <<[1]>>, в стандарте <<1.>>.
+%%% Увеличение счётчика количества источников для команды \totbibref.
 \makeatletter
-\renewcommand{\@biblabel}[1]{#1.\hfill}
+\renewcommand{\@biblabel}[1]{\stepcounter{totreferences}#1.\hfill}
 \makeatother
+% makeatletter changes binding of @ from 12 to 11, makeatother conversely.
+
 % Заголовок списка использованных источников. По-умолчанию <<Список литературы>>.
 \AtBeginDocument{\renewcommand{\refname}{\large\hfillСПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ\hfill}}
 
