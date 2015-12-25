@@ -7,3 +7,7 @@
 Проект также содержит пример оформления диплома. Файл main.tex содержит основной текст, в нём подключается файл стиля mutavel.sty. Титульный лист и бланк оформления задания вынесены в отдельные файлы title.tex и assignment.tex соответственно. В файле bibreferences.bib содержится база источников BibTeX, на которые можно ссылаться в тексте. Ссылки оформляются в соответствии с стандартом ГОСТ 7.0.5-2008 пакетом gost (http://www.ctan.org/tex-archive/biblio/bibtex/contrib/gost), который необходимо скачать и подключить перед использованием стиля для правильного оформления ссылок. (Для этого можно воспользоваться менеджером пакетов, либо скачать необходимые файлы в корень папки проекта). В файл custom-math.tex для удобства перенесены пользовательские математические функции. 
 
 Проект примера оформления скомпилирован в main.pdf.
+
+Проблемы:
+- pdfTeX error (font expansion): auto expansion is only possible with scalable fonts.
+ Решением было изменение в mutavel.sty \RequirePackage[tracking=true]{microtype} -> \RequirePackage[tracking=true, expansion=false]{microtype}
